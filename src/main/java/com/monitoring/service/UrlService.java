@@ -9,9 +9,16 @@ import java.net.URL;
 
 public class UrlService {
 
+    private ConnectionService connectionService;
+
+    public UrlService(){
+        connectionService = new ConnectionService();
+    }
+
     public ResponseStatus checkOptions(com.monitoring.domain.URL inputUrl) {
+
         long startTime = System.currentTimeMillis();
-        HttpURLConnection connection = openConnection(inputUrl.getPath());
+        HttpURLConnection connection = connectionService.openConnection(inputUrl.getPath());
         long time = System.currentTimeMillis() - startTime;
 
         if (time > inputUrl.getCriticalResponseTime()) {
@@ -72,21 +79,5 @@ public class UrlService {
 
         return true;
     }
-
-    private HttpURLConnection openConnection(String path) {
-        HttpURLConnection connection = null;
-
-        try {
-            URL url = new URL(path);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            return connection;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
-    }
+    
 }

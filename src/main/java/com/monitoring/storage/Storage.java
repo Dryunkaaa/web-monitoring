@@ -17,7 +17,7 @@ public class Storage {
         initConnection();
     }
 
-    public void closeResultSet(ResultSet rs){
+    protected void closeResultSet(ResultSet rs){
         try {
             rs.close();
         } catch (SQLException e) {
@@ -25,7 +25,7 @@ public class Storage {
         }
     }
 
-    protected void initDriver() {
+    private void initDriver() {
         try {
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
@@ -33,7 +33,7 @@ public class Storage {
         }
     }
 
-    protected void initConnection() {
+    private void initConnection() {
         String url = "jdbc:mysql://" + SERVER_PATH + "/" + DB_NAME;
         url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         try {
