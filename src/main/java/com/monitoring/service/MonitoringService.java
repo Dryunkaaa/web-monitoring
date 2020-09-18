@@ -4,23 +4,21 @@ import com.monitoring.domain.URL;
 import com.monitoring.entity.ResponseStatus;
 import com.monitoring.storage.UrlStorage;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MonitoringService {
 
-    private Set<URL> monitoringUrls;
+    private static List<URL> monitoringUrls = new ArrayList<>();
     private UrlStatusService urlStatusService;
 
-    public MonitoringService(){
-        monitoringUrls = new HashSet<>();
+    public MonitoringService() {
         urlStatusService = new UrlStatusService();
     }
 
-    public void startMonitoring(List<URL> allUrls){
+    public void startMonitoring(List<URL> allUrls) {
         for (URL url : allUrls) {
-            if (!monitoringUrls.contains(url)) {
+            if (!monitoringUrls.contains(url) && url.getMonitoringStatus()) {
                 monitoringUrls.add(url);
 
                 new Thread(() -> {
@@ -40,8 +38,13 @@ public class MonitoringService {
                         }
                     }
 
+                    monitoringUrls.remove(url);
                 }).start();
             }
         }
+    }
+
+    public List<URL> getMonitoringUrls() {
+        return monitoringUrls;
     }
 }

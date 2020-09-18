@@ -1,7 +1,7 @@
 package com.monitoring.controller;
 
 import com.monitoring.controller.url.UrlAddController;
-import com.monitoring.controller.url.UrlMonitoringController;
+import com.monitoring.controller.url.MonitoringController;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -21,7 +21,7 @@ public class FrontController implements Filter {
 
         handlers.put("/", new IndexController());
         handlers.put("/addUrl", new UrlAddController());
-        handlers.put("/changeMonitoringStatus", new UrlMonitoringController());
+        handlers.put("/changeMonitoringStatus", new MonitoringController());
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
