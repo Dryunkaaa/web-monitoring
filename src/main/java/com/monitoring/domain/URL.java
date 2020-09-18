@@ -132,20 +132,12 @@ public class URL {
         if (o == null || getClass() != o.getClass()) return false;
         URL url = (URL) o;
         return id == url.id &&
-                monitoringPeriod == url.monitoringPeriod &&
-                okResponseTime == url.okResponseTime &&
-                warningResponseTime == url.warningResponseTime &&
-                criticalResponseTime == url.criticalResponseTime &&
-                exceptedResponseCode == url.exceptedResponseCode &&
-                minResponseSize == url.minResponseSize &&
-                maxResponseSize == url.maxResponseSize &&
-                Objects.equals(path, url.path) &&
-                Objects.equals(responseSubstring, url.responseSubstring);
+                path.equals(url.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, path, monitoringPeriod, okResponseTime, warningResponseTime, criticalResponseTime, exceptedResponseCode, minResponseSize, maxResponseSize, responseSubstring);
+        return Objects.hash(id, path);
     }
 
     @Override
