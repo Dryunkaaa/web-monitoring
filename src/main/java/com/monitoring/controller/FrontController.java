@@ -1,5 +1,8 @@
 package com.monitoring.controller;
 
+import com.monitoring.controller.url.UrlAddController;
+import com.monitoring.controller.url.UrlMonitoringController;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +21,7 @@ public class FrontController implements Filter {
 
         handlers.put("/", new IndexController());
         handlers.put("/addUrl", new UrlAddController());
+        handlers.put("/changeMonitoringStatus", new UrlMonitoringController());
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -30,7 +34,7 @@ public class FrontController implements Filter {
 
         if (uri.endsWith(".jsp")) {
             filterChain.doFilter(servletRequest, servletResponse);
-        } else {
+        } else if (!uri.endsWith(".ico")){
             try {
                 handlers.get(uri).process(httpServletRequest, httpServletResponse);
             } catch (Exception e) {

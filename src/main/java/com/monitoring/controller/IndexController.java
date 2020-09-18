@@ -30,7 +30,7 @@ public class IndexController extends Controller {
                 Thread thread = new Thread(() -> {
                     UrlStorage urlStorage = new UrlStorage();
 
-                    while (!Thread.currentThread().isInterrupted()) {
+                    while (url.getMonitoringStatus()) {
                         ResponseStatus responseStatus = urlService.checkOptions(url);
 
                         if (!url.getResponseStatus().equals(responseStatus)) {
@@ -51,5 +51,13 @@ public class IndexController extends Controller {
         }
 
         request.getServletContext().getRequestDispatcher("/views/index.jsp").forward(request, response);
+    }
+
+    public Map<Long, Boolean> getStatusMap() {
+        return statusMap;
+    }
+
+    public void setStatusMap(Map<Long, Boolean> statusMap) {
+        this.statusMap = statusMap;
     }
 }

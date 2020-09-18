@@ -1,5 +1,6 @@
-package com.monitoring.controller;
+package com.monitoring.controller.url;
 
+import com.monitoring.controller.Controller;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.ResponseStatus;
 import com.monitoring.storage.UrlStorage;
