@@ -11,7 +11,7 @@ public class UrlAddController extends Controller {
 
     @Override
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        request.getRequestDispatcher("views/addUrl.jsp").forward(request, response);
+        request.getRequestDispatcher("views/add_url.jsp").forward(request, response);
     }
 
     @Override
