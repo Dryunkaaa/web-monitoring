@@ -5,18 +5,16 @@ import com.monitoring.entity.ResponseStatus;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
-public class UrlService {
+public class UrlStatusService {
 
     private ConnectionService connectionService;
 
-    public UrlService(){
+    public UrlStatusService(){
         connectionService = new ConnectionService();
     }
 
-    public ResponseStatus checkOptions(com.monitoring.domain.URL inputUrl) {
-
+    public ResponseStatus getStatus(com.monitoring.domain.URL inputUrl) {
         long startTime = System.currentTimeMillis();
         HttpURLConnection connection = connectionService.openConnection(inputUrl.getPath());
         long time = System.currentTimeMillis() - startTime;
@@ -27,7 +25,7 @@ public class UrlService {
             return ResponseStatus.Warning;
         }
 
-        if (!isInRange(connection, inputUrl) || !equalsResponseCode(connection, inputUrl)
+        if (!contentIsInRange(connection, inputUrl) || !equalsResponseCode(connection, inputUrl)
                 || containsHeaderSubstring(connection, inputUrl)) {
 
             return ResponseStatus.Critical;
@@ -40,7 +38,7 @@ public class UrlService {
         return ResponseStatus.OK;
     }
 
-    private boolean isInRange(HttpURLConnection connection, com.monitoring.domain.URL inputUrl) {
+    private boolean contentIsInRange(HttpURLConnection connection, com.monitoring.domain.URL inputUrl) {
         try {
             InputStream response = connection.getInputStream();
             int responseSize = response.available();
@@ -79,5 +77,5 @@ public class UrlService {
 
         return true;
     }
-    
+
 }

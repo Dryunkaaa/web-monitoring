@@ -2,7 +2,7 @@ package com.monitoring.controller;
 
 import com.monitoring.domain.URL;
 import com.monitoring.entity.ResponseStatus;
-import com.monitoring.service.UrlService;
+import com.monitoring.service.UrlStatusService;
 import com.monitoring.storage.UrlStorage;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class IndexController extends Controller {
         response.setIntHeader("Refresh",5);
         List<URL> urls = new UrlStorage().getAll();
 
-        UrlService urlService = new UrlService();
+        UrlStatusService urlStatusService = new UrlStatusService();
         request.setAttribute("urls", urls);
 
         for (URL url : urls) {
@@ -31,7 +31,7 @@ public class IndexController extends Controller {
                     UrlStorage urlStorage = new UrlStorage();
 
                     while (url.getMonitoringStatus()) {
-                        ResponseStatus responseStatus = urlService.checkOptions(url);
+                        ResponseStatus responseStatus = urlStatusService.getStatus(url);
 
                         if (!url.getResponseStatus().equals(responseStatus)) {
                             urlStorage.updateResponseStatus(url, responseStatus);

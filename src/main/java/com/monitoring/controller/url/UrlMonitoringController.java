@@ -3,7 +3,7 @@ package com.monitoring.controller.url;
 import com.monitoring.controller.Controller;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.ResponseStatus;
-import com.monitoring.service.UrlService;
+import com.monitoring.service.UrlStatusService;
 import com.monitoring.storage.UrlStorage;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,12 +22,12 @@ public class UrlMonitoringController extends Controller {
 
         if (url.getMonitoringStatus()){
 
-            UrlService urlService = new UrlService();
+            UrlStatusService urlStatusService = new UrlStatusService();
 
             new Thread(() -> {
 
                 while (url.getMonitoringStatus()) {
-                    ResponseStatus responseStatus = urlService.checkOptions(url);
+                    ResponseStatus responseStatus = urlStatusService.getStatus(url);
 
                     if (!url.getResponseStatus().equals(responseStatus)) {
                         urlStorage.updateResponseStatus(url, responseStatus);
