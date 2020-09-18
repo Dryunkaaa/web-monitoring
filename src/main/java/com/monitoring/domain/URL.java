@@ -28,18 +28,14 @@ public class URL {
 
     private ResponseStatus responseStatus;
 
-    private boolean workingStatus;
+    private boolean monitoringStatus;
 
-    public URL(){
-        workingStatus = true;
+    public boolean getMonitoringStatus() {
+        return monitoringStatus;
     }
 
-    public boolean isWorkingStatus() {
-        return workingStatus;
-    }
-
-    public void setWorkingStatus(boolean workingStatus) {
-        this.workingStatus = workingStatus;
+    public void setMonitoringStatus(boolean monitoringStatus) {
+        this.monitoringStatus = monitoringStatus;
     }
 
     public ResponseStatus getResponseStatus() {
