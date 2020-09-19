@@ -20,15 +20,16 @@ public class MonitoringController extends Controller {
         urlStorage.updateMonitoringStatus(url);
 
         MonitoringService monitoringService = new MonitoringService();
+        monitoringService.startMonitoring(urlStorage.getAll());
+
         List<URL> monitoringUrls = monitoringService.getMonitoringUrls();
 
         if (monitoringUrls.size() > 0) {
             int urlIndex = monitoringService.getMonitoringUrls().indexOf(url);
-            URL monitoringUrl = monitoringService.getMonitoringUrls().get(urlIndex);
+            URL monitoringUrl = monitoringUrls.get(urlIndex);
             monitoringUrl.setMonitoringStatus(!url.getMonitoringStatus());
         }
 
-        monitoringService.startMonitoring(urlStorage.getAll());
 
         response.sendRedirect("/");
     }

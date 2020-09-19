@@ -1,7 +1,8 @@
 package com.monitoring.service;
 
+import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
-import com.monitoring.entity.ResponseStatus;
+import com.monitoring.entity.Message;
 import com.monitoring.storage.UrlStorage;
 
 import java.util.ArrayList;
@@ -25,10 +26,11 @@ public class MonitoringService {
                     UrlStorage urlStorage = new UrlStorage();
 
                     while (url.getMonitoringStatus()) {
-                        ResponseStatus responseStatus = urlStatusService.getStatus(url);
+                        Message message = urlStatusService.getStatus1(url);
+                        IndexController.messageMap.put(url.getId(), message);
 
-                        if (!url.getResponseStatus().equals(responseStatus)) {
-                            urlStorage.updateResponseStatus(url, responseStatus);
+                        if (!url.getResponseStatus().equals(message.getResponseStatus())) {
+                            urlStorage.updateResponseStatus(url, message.getResponseStatus());
                         }
 
                         try {
