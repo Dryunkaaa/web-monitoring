@@ -26,7 +26,7 @@ public class MonitoringService {
                     UrlStorage urlStorage = new UrlStorage();
 
                     while (url.getMonitoringStatus()) {
-                        Message message = urlStatusService.getStatus1(url);
+                        Message message = urlStatusService.getStatus(url);
                         IndexController.messageMap.put(url.getId(), message);
 
                         if (!url.getResponseStatus().equals(message.getResponseStatus())) {

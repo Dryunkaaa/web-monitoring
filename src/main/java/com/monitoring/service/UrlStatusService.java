@@ -17,31 +17,7 @@ public class UrlStatusService {
         connectionService = new ConnectionService();
     }
 
-    public ResponseStatus getStatus(URL inputUrl) {
-        long startTime = System.currentTimeMillis();
-        HttpURLConnection connection = connectionService.openConnection(inputUrl.getPath());
-        long time = System.currentTimeMillis() - startTime;
-
-        if (time > inputUrl.getCriticalResponseTime()) {
-            return ResponseStatus.Critical;
-        } else if (time >= inputUrl.getWarningResponseTime() && time < inputUrl.getCriticalResponseTime()) {
-            return ResponseStatus.Warning;
-        }
-
-        if (!contentIsInRange(connection, inputUrl) || !equalsResponseCode(connection, inputUrl)
-                || containsHeaderSubstring(connection, inputUrl)) {
-
-            return ResponseStatus.Critical;
-        }
-
-        if (connection != null) {
-            connection.disconnect();
-        }
-
-        return ResponseStatus.OK;
-    }
-
-    public Message getStatus1(URL inputUrl) {
+    public Message getStatus(URL inputUrl) {
         long startTime = System.currentTimeMillis();
         HttpURLConnection connection = connectionService.openConnection(inputUrl.getPath());
         long time = System.currentTimeMillis() - startTime;
