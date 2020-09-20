@@ -79,6 +79,16 @@ public class UrlStorage extends Storage {
         return new URL();
     }
 
+    public void remove(long urlId){
+        String query = "delete from urls where id = " + urlId;
+
+        try {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void update(URL url) {
         try {
             updateStatement.setString(1, url.getPath());

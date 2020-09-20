@@ -41,6 +41,7 @@
             }
 
             out.println("<td><a href='/edit?urlId="+ url.getId() + "'>Edit</a></td>");
+            out.println("<td><a href='/delete?urlId="+ url.getId() + "'>Remove</a></td>");
         }
 
     %>

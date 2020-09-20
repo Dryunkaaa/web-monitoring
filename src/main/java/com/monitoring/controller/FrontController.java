@@ -1,6 +1,7 @@
 package com.monitoring.controller;
 
 import com.monitoring.controller.url.EditUrlController;
+import com.monitoring.controller.url.RemoveUrlController;
 import com.monitoring.controller.url.UrlAddController;
 import com.monitoring.controller.url.MonitoringController;
 
@@ -24,6 +25,7 @@ public class FrontController implements Filter {
         handlers.put("/addUrl", new UrlAddController());
         handlers.put("/changeMonitoringStatus", new MonitoringController());
         handlers.put("/edit", new EditUrlController());
+        handlers.put("/delete", new RemoveUrlController());
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

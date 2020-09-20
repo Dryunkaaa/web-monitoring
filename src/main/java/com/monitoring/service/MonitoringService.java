@@ -6,11 +6,14 @@ import com.monitoring.entity.Message;
 import com.monitoring.storage.UrlStorage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MonitoringService {
 
     private static List<URL> monitoringUrls = new ArrayList<>();
+    private static Map<URL, Thread> threadMap = new HashMap<>();
     private UrlStatusService urlStatusService;
 
     public MonitoringService() {
@@ -22,14 +25,15 @@ public class MonitoringService {
             if (!monitoringUrls.contains(url) && url.getMonitoringStatus()) {
                 monitoringUrls.add(url);
 
-                new Thread(() -> {
+                Thread thread = new Thread(() -> {
                     UrlStorage urlStorage = new UrlStorage();
 
-                    while (url.getMonitoringStatus()) {
+                    while (url.getMonitoringStatus() && !Thread.currentThread().isInterrupted()) {
                         Message message = urlStatusService.getStatus(url);
                         IndexController.messageMap.put(url.getId(), message);
 
-                        if (!url.getResponseStatus().equals(message.getResponseStatus())) {
+                        if (!url.getResponseStatus().equals(message.getResponseStatus())
+                                && !Thread.currentThread().isInterrupted()) {
                             urlStorage.updateResponseStatus(url, message.getResponseStatus());
                         }
 
@@ -41,9 +45,16 @@ public class MonitoringService {
                     }
 
                     monitoringUrls.remove(url);
-                }).start();
+                });
+
+                threadMap.put(url, thread);
+                thread.start();
             }
         }
+    }
+
+    public Map<URL, Thread> getThreadMap() {
+        return threadMap;
     }
 
     public List<URL> getMonitoringUrls() {
