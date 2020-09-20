@@ -39,6 +39,8 @@
             } else {
                 out.println("<td><a href='/changeMonitoringStatus?id=" + url.getId() + "'>Start monitoring</a></td>");
             }
+
+            out.println("<td><a href='/edit?urlId="+ url.getId() + "'>Edit</a></td>");
         }
 
     %>

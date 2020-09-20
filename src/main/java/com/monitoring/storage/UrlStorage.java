@@ -12,6 +12,7 @@ import java.util.List;
 public class UrlStorage extends Storage {
 
     private PreparedStatement createStatement;
+    private PreparedStatement updateStatement;
 
     public UrlStorage() {
         initStatements();
@@ -78,6 +79,27 @@ public class UrlStorage extends Storage {
         return new URL();
     }
 
+    public void update(URL url) {
+        try {
+            updateStatement.setString(1, url.getPath());
+            updateStatement.setLong(2, url.getMonitoringPeriod());
+            updateStatement.setLong(3, url.getOkResponseTime());
+            updateStatement.setLong(4, url.getWarningResponseTime());
+            updateStatement.setLong(5, url.getCriticalResponseTime());
+            updateStatement.setInt(6, url.getExceptedResponseCode());
+            updateStatement.setLong(7, url.getMinResponseSize());
+            updateStatement.setLong(8, url.getMaxResponseSize());
+            updateStatement.setString(9, url.getResponseSubstring());
+            updateStatement.setString(10, url.getResponseStatus().toString());
+            updateStatement.setBoolean(11, true);
+            updateStatement.setLong(12, url.getId());
+
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateResponseStatus(URL url, ResponseStatus responseStatus) {
         String query = "update urls set response_status = '" + responseStatus.toString() + "' where id = " + url.getId();
 
@@ -139,13 +161,19 @@ public class UrlStorage extends Storage {
 
     private void initStatements() {
         StringBuilder builder = new StringBuilder();
+        StringBuilder updateBuilder = new StringBuilder();
 
         builder.append("insert into urls (path, monitoring_period,ok_response_time, warning_response_time,")
                 .append("critical_response_time,excepted_response_code, min_response_size, max_response_size, ")
                 .append("response_substring, response_status, monitoring_status) values (?,?,?,?,?,?,?,?,?,?,?)");
 
+        updateBuilder.append("update urls set path = ?, monitoring_period=?, ok_response_time=?,")
+                .append("warning_response_time=?, critical_response_time=?, excepted_response_code=?, min_response_size=?,")
+                .append("max_response_size=?, response_substring=?,response_status=?, monitoring_status=? where id = ?");
+
         try {
             createStatement = connection.prepareStatement(builder.toString());
+            updateStatement = connection.prepareStatement(updateBuilder.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
