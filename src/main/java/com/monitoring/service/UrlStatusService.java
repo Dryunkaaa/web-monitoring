@@ -1,13 +1,12 @@
 package com.monitoring.service;
 
+import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
 import com.monitoring.entity.ResponseStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-
-import com.monitoring.domain.URL;
 
 public class UrlStatusService {
 
@@ -30,11 +29,20 @@ public class UrlStatusService {
 
         String errorText = "";
 
-        if (!contentIsInRange(connection, inputUrl)) {
-            errorText = "Response size is out of bounds";
-        } else if (!equalsResponseCode(connection, inputUrl)) {
+        try {
+            InputStream inputStream = connection.getInputStream();
+
+            if (!contentIsInBounds(inputStream, inputUrl)) {
+                errorText = "Response size is out of bounds";
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!equalsResponseCode(connection, inputUrl.getExceptedResponseCode())) {
             errorText = "Expected code not received";
-        } else if (!containsHeaderSubstring(connection, inputUrl)) {
+        } else if (!containsHeaderSubstring(connection, inputUrl.getResponseSubstring())) {
             errorText = "Expected header substring not received";
         }
 
@@ -49,40 +57,36 @@ public class UrlStatusService {
         return new Message(ResponseStatus.Critical, errorText);
     }
 
-    private boolean contentIsInRange(HttpURLConnection connection, URL inputUrl) {
+    public boolean contentIsInBounds(InputStream contentStream, URL url) {
         try {
-            InputStream response = connection.getInputStream();
-            int responseSize = response.available();
+            int responseSize = contentStream.available();
 
-            if (responseSize < inputUrl.getMinResponseSize() || responseSize > inputUrl.getMaxResponseSize()) {
-                return false;
-            }
+            BoundService boundService = new BoundService();
+
+            return boundService.numberIsInRange(responseSize, url.getMinResponseSize(), url.getMaxResponseSize());
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
 
-        return true;
+
+        return false;
     }
 
-    private boolean equalsResponseCode(HttpURLConnection connection, URL inputUrl) {
+    public boolean equalsResponseCode(HttpURLConnection connection, int expectedCode) {
         try {
             int responseCode = connection.getResponseCode();
-            if (inputUrl.getExceptedResponseCode() != responseCode) {
-                return false;
-            }
+            return expectedCode == responseCode;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
 
-        return true;
+        return false;
     }
 
-    private boolean containsHeaderSubstring(HttpURLConnection connection, URL inputUrl) {
-        String server = connection.getHeaderField(inputUrl.getResponseSubstring());
+    public boolean containsHeaderSubstring(HttpURLConnection connection, String headerSubstring) {
+        String server = connection.getHeaderField(headerSubstring);
 
-        if (!inputUrl.getResponseSubstring().isEmpty() && server == null) {
+        if (headerSubstring.isEmpty() || server == null) {
             return false;
         }
 

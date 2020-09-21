@@ -25,7 +25,6 @@ public class EditUrlController extends Controller {
     @Override
     public void handlePost(HttpServletRequest request, HttpServletResponse response) throws Exception {
         long id = Long.parseLong(request.getParameter("id"));
-        String path = request.getParameter("path");
         long monitoringPeriod = Long.parseLong(request.getParameter("monitoringPeriod"));
         long okResponseTime = Long.parseLong(request.getParameter("okResponseTime"));
         long warningResponseTime = Long.parseLong(request.getParameter("warningResponseTime"));
@@ -35,7 +34,6 @@ public class EditUrlController extends Controller {
         long minResponseSize = Long.parseLong(request.getParameter("minResponseSize"));
         String responseSubstring = request.getParameter("responseSubstring");
 
-
         MonitoringService monitoringService = new MonitoringService();
         UrlStorage urlStorage = new UrlStorage();
 
@@ -44,7 +42,7 @@ public class EditUrlController extends Controller {
 
         URL url = urlStorage.getById(id);
 
-        if (monitoringUrlIndex != -1) { // current url exist in list
+        if (monitoringUrlIndex != -1) { // method returned '-1' if element didn't found
             url = monitoringUrls.get(monitoringUrlIndex);
         }
 
