@@ -10,12 +10,21 @@ public class Storage {
     protected static final String DB_NAME = "webmonitoring";
     protected static final String DB_LOGIN = "root";
     protected static final String DB_PASSWORD = "thequemal7";
-    protected Connection connection;
+    protected static Connection connection;
     protected Statement statement;
 
     public Storage(){
+        if (connection == null){
+            initConnection();
+        }else{
+            try {
+                statement = connection.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         initDriver();
-        initConnection();
+//        initConnection();
     }
 
     protected void closeResultSet(ResultSet rs){
