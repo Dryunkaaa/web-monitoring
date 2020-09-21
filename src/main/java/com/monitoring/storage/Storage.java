@@ -33,11 +33,21 @@ public class Storage {
         }
     }
 
+//    private void initConnection() {
+//        String url = "jdbc:mysql://" + SERVER_PATH + "/" + DB_NAME;
+//        url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+//        try {
+//            connection = DriverManager.getConnection(url, DB_LOGIN, DB_PASSWORD);
+//            statement = connection.createStatement();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
     private void initConnection() {
-        String url = "jdbc:mysql://" + SERVER_PATH + "/" + DB_NAME;
+        String url = "jdbc:postgresql://" + "ec2-54-247-71-245.eu-west-1.compute.amazonaws.com:5432/deqfseqdab4btv";
         url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         try {
-            connection = DriverManager.getConnection(url, DB_LOGIN, DB_PASSWORD);
+            connection = DriverManager.getConnection(url, "nctyahnhqwmzxs", "9dff8915dfc180dd6142ebc100b629d36e0b2237e799c61cda3dc6ce4b0cc9be");
             statement = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();

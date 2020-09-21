@@ -84,9 +84,13 @@ public class UrlStatusService {
     }
 
     public boolean containsHeaderSubstring(HttpURLConnection connection, String headerSubstring) {
+        if (headerSubstring.isEmpty()){
+            return true;
+        }
+
         String server = connection.getHeaderField(headerSubstring);
 
-        if (headerSubstring.isEmpty() || server == null) {
+        if (server == null) {
             return false;
         }
 
