@@ -4,7 +4,8 @@ import java.sql.*;
 
 public class Storage {
 
-    protected static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+//    protected static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+    protected static final String DB_DRIVER = "org.postgresql.Driver";
     protected static final String SERVER_PATH = "localhost:3306";
     protected static final String DB_NAME = "webmonitoring";
     protected static final String DB_LOGIN = "root";
