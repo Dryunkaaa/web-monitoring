@@ -68,7 +68,6 @@ public class UrlStatusService {
             e.printStackTrace();
         }
 
-
         return false;
     }
 
