@@ -34,7 +34,7 @@
                 out.println("<td>Unknown</td>");
             }
 
-            if (url.getMonitoringStatus()) {
+            if (url.enabledMonitoringStatus()) {
                 out.println("<td><a href='/changeMonitoringStatus?id=" + url.getId() + "'>Stop monitoring</a></td>");
             } else {
                 out.println("<td><a href='/changeMonitoringStatus?id=" + url.getId() + "'>Start monitoring</a></td>");

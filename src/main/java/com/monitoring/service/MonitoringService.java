@@ -5,59 +5,53 @@ import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
 import com.monitoring.storage.UrlStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MonitoringService {
 
-    private static List<URL> monitoringUrls = new ArrayList<>();
-    private static Map<URL, Thread> threadMap = new HashMap<>();
-    private UrlStatusService urlStatusService;
+    private UrlParameterService urlParameterService;
 
     public MonitoringService() {
-        urlStatusService = new UrlStatusService();
+        urlParameterService = new UrlParameterService();
     }
 
-    public void startMonitoring(List<URL> allUrls) {
-        for (URL url : allUrls) {
-            if (!monitoringUrls.contains(url) && url.getMonitoringStatus()) {
-                monitoringUrls.add(url);
+    public void startMonitoring(List<URL> urlList){
+        for (URL url : urlList){
+            if (!IndexController.monitoringUrls.contains(url) && url.enabledMonitoringStatus()){
+                IndexController.monitoringUrls.add(url);
 
-                Thread thread = new Thread(() -> {
-                    UrlStorage urlStorage = new UrlStorage();
+                Thread thread = new Thread(getMonitoringTask(url));
+                url.setThread(thread);
 
-                    while (url.getMonitoringStatus() && !Thread.currentThread().isInterrupted()) {
-                        Message message = urlStatusService.getStatus(url);
-                        IndexController.messageMap.put(url.getId(), message);
-
-                        if (!url.getResponseStatus().equals(message.getResponseStatus())
-                                && !Thread.currentThread().isInterrupted()) {
-                            urlStorage.updateResponseStatus(url, message.getResponseStatus());
-                        }
-
-                        try {
-                            Thread.currentThread().sleep(url.getMonitoringPeriod());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    monitoringUrls.remove(url);
-                });
-
-                threadMap.put(url, thread);
                 thread.start();
             }
         }
     }
 
-    public Map<URL, Thread> getThreadMap() {
-        return threadMap;
+    private Runnable getMonitoringTask(URL url) {
+        Runnable runnable = () -> {
+            UrlStorage urlStorage = new UrlStorage();
+
+            while (url.enabledMonitoringStatus() && !Thread.currentThread().isInterrupted()) {
+                Message message = urlParameterService.getMessage(url);
+                IndexController.messageMap.put(url.getId(), message);
+
+                if (!url.getResponseStatus().equals(message.getResponseStatus())
+                        && !Thread.currentThread().isInterrupted()) {
+                    urlStorage.updateResponseStatus(url, message.getResponseStatus());
+                }
+
+                try {
+                    Thread.currentThread().sleep(url.getMonitoringPeriod());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            IndexController.monitoringUrls.remove(url);
+        };
+
+        return runnable;
     }
 
-    public List<URL> getMonitoringUrls() {
-        return monitoringUrls;
-    }
 }

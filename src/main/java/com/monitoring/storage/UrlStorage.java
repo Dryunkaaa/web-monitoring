@@ -18,7 +18,10 @@ public class UrlStorage extends Storage {
         initStatements();
     }
 
-    public void addUrl(URL url) {
+    @Override
+    public void create(Object object) {
+        URL url = (URL) object;
+
         try {
             createStatement.setString(1, url.getPath());
             createStatement.setLong(2, url.getMonitoringPeriod());
@@ -38,9 +41,44 @@ public class UrlStorage extends Storage {
         }
     }
 
+    @Override
+    public void remove(long urlId) {
+        String query = "delete from urls where id = " + urlId;
+
+        try {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update(Object inputUrl) {
+        URL url = (URL) inputUrl;
+
+        try {
+            updateStatement.setString(1, url.getPath());
+            updateStatement.setLong(2, url.getMonitoringPeriod());
+            updateStatement.setLong(3, url.getOkResponseTime());
+            updateStatement.setLong(4, url.getWarningResponseTime());
+            updateStatement.setLong(5, url.getCriticalResponseTime());
+            updateStatement.setInt(6, url.getExceptedResponseCode());
+            updateStatement.setLong(7, url.getMinResponseSize());
+            updateStatement.setLong(8, url.getMaxResponseSize());
+            updateStatement.setString(9, url.getResponseSubstring());
+            updateStatement.setString(10, url.getResponseStatus().toString());
+            updateStatement.setBoolean(11, true);
+            updateStatement.setLong(12, url.getId());
+
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<URL> getAll() {
         String query = "select* from urls";
-        List<URL> urls = new ArrayList<URL>();
+        List<URL> urls = new ArrayList<>();
 
         ResultSet rs = null;
         try {
@@ -79,37 +117,6 @@ public class UrlStorage extends Storage {
         return new URL();
     }
 
-    public void remove(long urlId){
-        String query = "delete from urls where id = " + urlId;
-
-        try {
-            statement.executeUpdate(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void update(URL url) {
-        try {
-            updateStatement.setString(1, url.getPath());
-            updateStatement.setLong(2, url.getMonitoringPeriod());
-            updateStatement.setLong(3, url.getOkResponseTime());
-            updateStatement.setLong(4, url.getWarningResponseTime());
-            updateStatement.setLong(5, url.getCriticalResponseTime());
-            updateStatement.setInt(6, url.getExceptedResponseCode());
-            updateStatement.setLong(7, url.getMinResponseSize());
-            updateStatement.setLong(8, url.getMaxResponseSize());
-            updateStatement.setString(9, url.getResponseSubstring());
-            updateStatement.setString(10, url.getResponseStatus().toString());
-            updateStatement.setBoolean(11, true);
-            updateStatement.setLong(12, url.getId());
-
-            updateStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void updateResponseStatus(URL url, ResponseStatus responseStatus) {
         String query = "update urls set response_status = '" + responseStatus.toString() + "' where id = " + url.getId();
 
@@ -121,7 +128,7 @@ public class UrlStorage extends Storage {
     }
 
     public void updateMonitoringStatus(URL url) {
-        boolean newMonitoringStatus = !url.getMonitoringStatus();
+        boolean newMonitoringStatus = !url.enabledMonitoringStatus();
 
         String query = "update urls set monitoring_status = " + newMonitoringStatus + " where id = " + url.getId();
 

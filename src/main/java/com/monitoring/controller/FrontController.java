@@ -3,7 +3,8 @@ package com.monitoring.controller;
 import com.monitoring.controller.url.EditUrlController;
 import com.monitoring.controller.url.RemoveUrlController;
 import com.monitoring.controller.url.UrlAddController;
-import com.monitoring.controller.url.MonitoringController;
+import com.monitoring.controller.url.MonitoringStatusController;
+import com.monitoring.service.UrlService;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -23,7 +24,7 @@ public class FrontController implements Filter {
 
         handlers.put("/", new IndexController());
         handlers.put("/addUrl", new UrlAddController());
-        handlers.put("/changeMonitoringStatus", new MonitoringController());
+        handlers.put("/changeMonitoringStatus", new MonitoringStatusController());
         handlers.put("/edit", new EditUrlController());
         handlers.put("/delete", new RemoveUrlController());
     }
@@ -31,7 +32,6 @@ public class FrontController implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-
         httpServletRequest.setCharacterEncoding("UTF-8");
 
         String uri = httpServletRequest.getRequestURI();
@@ -39,16 +39,17 @@ public class FrontController implements Filter {
         if (uri.endsWith(".jsp")) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else if (!uri.endsWith(".ico")){
+
             try {
-                handlers.get(removeUrlParameters(uri)).process(httpServletRequest, httpServletResponse);
+                UrlService urlService = new UrlService();
+                String validUrl = urlService.removeParameters(uri);
+
+                handlers.get(validUrl).process(httpServletRequest, httpServletResponse);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
 
-    private String removeUrlParameters(String url){
-        return url.split("\\?")[0];
+        }
     }
 
     public void destroy() {

@@ -30,7 +30,17 @@ public class URL {
 
     private boolean monitoringStatus;
 
-    public boolean getMonitoringStatus() {
+    private Thread thread;
+
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
+
+    public boolean enabledMonitoringStatus() {
         return monitoringStatus;
     }
 

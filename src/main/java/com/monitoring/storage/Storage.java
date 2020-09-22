@@ -1,8 +1,9 @@
 package com.monitoring.storage;
 
 import java.sql.*;
+import java.util.List;
 
-public class Storage {
+public abstract class Storage {
 
     protected static final String DB_DRIVER = "org.postgresql.Driver";
     protected static final String SERVER_PATH = "ec2-54-247-71-245.eu-west-1.compute.amazonaws.com:5432";
@@ -25,6 +26,12 @@ public class Storage {
 
         initDriver();
     }
+
+    public abstract void create(Object object);
+
+    public abstract void remove(long id);
+
+    public abstract void update(Object object);
 
     protected void closeResultSet(ResultSet rs) {
         try {

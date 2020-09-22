@@ -40,7 +40,7 @@ public class UrlAddController extends Controller {
         url.setResponseStatus(ResponseStatus.OK);
 
         UrlStorage urlStorage = new UrlStorage();
-        urlStorage.addUrl(url);
+        urlStorage.create(url);
 
         response.sendRedirect("/");
     }

@@ -1,8 +1,9 @@
 package com.monitoring.controller.url;
 
 import com.monitoring.controller.Controller;
+import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
-import com.monitoring.service.MonitoringService;
+import com.monitoring.service.UrlService;
 import com.monitoring.storage.UrlStorage;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +16,16 @@ public class RemoveUrlController extends Controller {
         long id = Long.parseLong(request.getParameter("urlId"));
         UrlStorage urlStorage = new UrlStorage();
 
-        MonitoringService monitoringService = new MonitoringService();
+        UrlService urlService = new UrlService();
 
-        URL url = urlStorage.getById(id);
-        monitoringService.getMonitoringUrls().remove(url);
-        monitoringService.getThreadMap().get(url).interrupt();
-        monitoringService.getThreadMap().get(url).interrupt();
-        monitoringService.getThreadMap().remove(url);
+        URL url = urlService.findUrlById(IndexController.monitoringUrls, id);
+
+        if (url.getThread() != null){
+            url.getThread().interrupt();
+            url.getThread().interrupt();
+        }
+
+        IndexController.monitoringUrls.remove(url);
 
         urlStorage.remove(id);
 

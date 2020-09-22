@@ -1,6 +1,7 @@
 package com.monitoring.controller.url;
 
 import com.monitoring.controller.Controller;
+import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.service.MonitoringService;
 import com.monitoring.storage.UrlStorage;
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class MonitoringController extends Controller {
+public class MonitoringStatusController extends Controller {
 
     @Override
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -22,14 +23,13 @@ public class MonitoringController extends Controller {
         MonitoringService monitoringService = new MonitoringService();
         monitoringService.startMonitoring(urlStorage.getAll());
 
-        List<URL> monitoringUrls = monitoringService.getMonitoringUrls();
+        List<URL> monitoringUrls = IndexController.monitoringUrls;
 
         if (monitoringUrls.size() > 0) {
-            int urlIndex = monitoringService.getMonitoringUrls().indexOf(url);
+            int urlIndex = monitoringUrls.indexOf(url);
             URL monitoringUrl = monitoringUrls.get(urlIndex);
-            monitoringUrl.setMonitoringStatus(!url.getMonitoringStatus());
+            monitoringUrl.setMonitoringStatus(!url.enabledMonitoringStatus());
         }
-
 
         response.sendRedirect("/");
     }

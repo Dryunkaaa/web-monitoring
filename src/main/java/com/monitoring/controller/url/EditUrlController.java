@@ -1,6 +1,7 @@
 package com.monitoring.controller.url;
 
 import com.monitoring.controller.Controller;
+import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.service.MonitoringService;
 import com.monitoring.storage.UrlStorage;
@@ -34,10 +35,9 @@ public class EditUrlController extends Controller {
         long minResponseSize = Long.parseLong(request.getParameter("minResponseSize"));
         String responseSubstring = request.getParameter("responseSubstring");
 
-        MonitoringService monitoringService = new MonitoringService();
         UrlStorage urlStorage = new UrlStorage();
 
-        List<URL> monitoringUrls = monitoringService.getMonitoringUrls();
+        List<URL> monitoringUrls = IndexController.monitoringUrls;
         int monitoringUrlIndex = monitoringUrls.indexOf(urlStorage.getById(id));
 
         URL url = urlStorage.getById(id);
