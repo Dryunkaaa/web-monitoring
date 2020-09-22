@@ -31,7 +31,6 @@
             <version>42.2.16</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>

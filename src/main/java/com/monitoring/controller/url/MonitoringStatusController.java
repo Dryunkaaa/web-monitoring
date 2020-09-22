@@ -4,10 +4,12 @@ import com.monitoring.controller.Controller;
 import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.service.MonitoringService;
-import com.monitoring.storage.UrlStorage;
+import com.monitoring.storage.UrlDatabaseStorage;
+import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MonitoringStatusController extends Controller {
@@ -15,13 +17,17 @@ public class MonitoringStatusController extends Controller {
     @Override
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
         long id = Long.parseLong(request.getParameter("id"));
-        UrlStorage urlStorage = new UrlStorage();
+        UrlRepository urlRepository = new UrlDatabaseStorage();
 
-        URL url = urlStorage.getById(id);
-        urlStorage.updateMonitoringStatus(url);
+        URL url = (URL) urlRepository.getDataById(id);
+        urlRepository.updateMonitoringStatus(url);
 
         MonitoringService monitoringService = new MonitoringService();
-        monitoringService.startMonitoring(urlStorage.getAll());
+
+        List<URL> urls = new ArrayList<>();
+        urlRepository.getListData().forEach(o -> urls.add((URL) o));
+
+        monitoringService.startMonitoring(urls);
 
         List<URL> monitoringUrls = IndexController.monitoringUrls;
 

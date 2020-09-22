@@ -3,7 +3,8 @@ package com.monitoring.service;
 import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
-import com.monitoring.storage.UrlStorage;
+import com.monitoring.storage.UrlDatabaseStorage;
+import com.monitoring.storage.UrlRepository;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class MonitoringService {
 
     private Runnable getMonitoringTask(URL url) {
         Runnable runnable = () -> {
-            UrlStorage urlStorage = new UrlStorage();
+            UrlRepository urlRepository = new UrlDatabaseStorage();
 
             while (url.enabledMonitoringStatus() && !Thread.currentThread().isInterrupted()) {
                 Message message = urlParameterService.getMessage(url);
@@ -38,7 +39,7 @@ public class MonitoringService {
 
                 if (!url.getResponseStatus().equals(message.getResponseStatus())
                         && !Thread.currentThread().isInterrupted()) {
-                    urlStorage.updateResponseStatus(url, message.getResponseStatus());
+                    urlRepository.updateResponseStatus(url, message.getResponseStatus());
                 }
 
                 try {

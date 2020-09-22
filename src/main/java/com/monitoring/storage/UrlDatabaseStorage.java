@@ -9,41 +9,64 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UrlStorage extends Storage {
+public class UrlDatabaseStorage extends DatabaseStorage implements UrlRepository {
 
     private PreparedStatement createStatement;
     private PreparedStatement updateStatement;
 
-    public UrlStorage() {
+    public UrlDatabaseStorage() {
         initStatements();
     }
 
     @Override
-    public void create(Object object) {
-        URL url = (URL) object;
+    public Object getDataById(long id) {
+        String query = "select* from urls where id = " + id;
 
+        ResultSet rs = null;
         try {
-            createStatement.setString(1, url.getPath());
-            createStatement.setLong(2, url.getMonitoringPeriod());
-            createStatement.setLong(3, url.getOkResponseTime());
-            createStatement.setLong(4, url.getWarningResponseTime());
-            createStatement.setLong(5, url.getCriticalResponseTime());
-            createStatement.setInt(6, url.getExceptedResponseCode());
-            createStatement.setLong(7, url.getMinResponseSize());
-            createStatement.setLong(8, url.getMaxResponseSize());
-            createStatement.setString(9, url.getResponseSubstring());
-            createStatement.setString(10, url.getResponseStatus().toString());
-            createStatement.setBoolean(11, true);
+            rs = statement.executeQuery(query);
 
-            createStatement.executeUpdate();
+            while (rs.next()) {
+                return getUrlWithProperties(rs);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeResultSet(rs);
         }
+
+        return new URL();
     }
 
     @Override
-    public void remove(long urlId) {
-        String query = "delete from urls where id = " + urlId;
+    public List<Object> getListData() {
+        String query = "select* from urls";
+        List<Object> urls = new ArrayList<>();
+
+        ResultSet rs = null;
+        try {
+            rs = statement.executeQuery(query);
+
+            while (rs.next()) {
+                urls.add(getUrlWithProperties(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResultSet(rs);
+        }
+
+        return urls;
+    }
+
+    @Override
+    public void remove(Object data) {
+        URL url = (URL) data;
+        long id = url.getId();
+
+        String query = "delete from urls where id = " + id;
 
         try {
             statement.executeUpdate(query);
@@ -53,8 +76,8 @@ public class UrlStorage extends Storage {
     }
 
     @Override
-    public void update(Object inputUrl) {
-        URL url = (URL) inputUrl;
+    public void update(Object data) {
+        URL url = (URL) data;
 
         try {
             updateStatement.setString(1, url.getPath());
@@ -76,47 +99,30 @@ public class UrlStorage extends Storage {
         }
     }
 
-    public List<URL> getAll() {
-        String query = "select* from urls";
-        List<URL> urls = new ArrayList<>();
+    @Override
+    public void create(Object data) {
+        URL url = (URL) data;
 
-        ResultSet rs = null;
         try {
-            rs = statement.executeQuery(query);
+            createStatement.setString(1, url.getPath());
+            createStatement.setLong(2, url.getMonitoringPeriod());
+            createStatement.setLong(3, url.getOkResponseTime());
+            createStatement.setLong(4, url.getWarningResponseTime());
+            createStatement.setLong(5, url.getCriticalResponseTime());
+            createStatement.setInt(6, url.getExceptedResponseCode());
+            createStatement.setLong(7, url.getMinResponseSize());
+            createStatement.setLong(8, url.getMaxResponseSize());
+            createStatement.setString(9, url.getResponseSubstring());
+            createStatement.setString(10, url.getResponseStatus().toString());
+            createStatement.setBoolean(11, true);
 
-            while (rs.next()) {
-                urls.add(getUrlWithProperties(rs));
-            }
-
+            createStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            closeResultSet(rs);
         }
-
-        return urls;
     }
 
-    public URL getById(long inputId) {
-        String query = "select* from urls where id = " + inputId;
-
-        ResultSet rs = null;
-        try {
-            rs = statement.executeQuery(query);
-
-            while (rs.next()) {
-                return getUrlWithProperties(rs);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeResultSet(rs);
-        }
-
-        return new URL();
-    }
-
+    @Override
     public void updateResponseStatus(URL url, ResponseStatus responseStatus) {
         String query = "update urls set response_status = '" + responseStatus.toString() + "' where id = " + url.getId();
 
@@ -127,6 +133,7 @@ public class UrlStorage extends Storage {
         }
     }
 
+    @Override
     public void updateMonitoringStatus(URL url) {
         boolean newMonitoringStatus = !url.enabledMonitoringStatus();
 
@@ -134,6 +141,26 @@ public class UrlStorage extends Storage {
 
         try {
             statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initStatements() {
+        StringBuilder builder = new StringBuilder();
+        StringBuilder updateBuilder = new StringBuilder();
+
+        builder.append("insert into urls (path, monitoring_period,ok_response_time, warning_response_time,")
+                .append("critical_response_time,excepted_response_code, min_response_size, max_response_size, ")
+                .append("response_substring, response_status, monitoring_status) values (?,?,?,?,?,?,?,?,?,?,?)");
+
+        updateBuilder.append("update urls set path = ?, monitoring_period=?, ok_response_time=?,")
+                .append("warning_response_time=?, critical_response_time=?, excepted_response_code=?, min_response_size=?,")
+                .append("max_response_size=?, response_substring=?,response_status=?, monitoring_status=? where id = ?");
+
+        try {
+            createStatement = connection.prepareStatement(builder.toString());
+            updateStatement = connection.prepareStatement(updateBuilder.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -176,23 +203,4 @@ public class UrlStorage extends Storage {
         return new URL();
     }
 
-    private void initStatements() {
-        StringBuilder builder = new StringBuilder();
-        StringBuilder updateBuilder = new StringBuilder();
-
-        builder.append("insert into urls (path, monitoring_period,ok_response_time, warning_response_time,")
-                .append("critical_response_time,excepted_response_code, min_response_size, max_response_size, ")
-                .append("response_substring, response_status, monitoring_status) values (?,?,?,?,?,?,?,?,?,?,?)");
-
-        updateBuilder.append("update urls set path = ?, monitoring_period=?, ok_response_time=?,")
-                .append("warning_response_time=?, critical_response_time=?, excepted_response_code=?, min_response_size=?,")
-                .append("max_response_size=?, response_substring=?,response_status=?, monitoring_status=? where id = ?");
-
-        try {
-            createStatement = connection.prepareStatement(builder.toString());
-            updateStatement = connection.prepareStatement(updateBuilder.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -3,7 +3,8 @@ package com.monitoring.controller.url;
 import com.monitoring.controller.Controller;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.ResponseStatus;
-import com.monitoring.storage.UrlStorage;
+import com.monitoring.storage.UrlDatabaseStorage;
+import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +40,8 @@ public class UrlAddController extends Controller {
         url.setResponseSubstring(responseSubstring);
         url.setResponseStatus(ResponseStatus.OK);
 
-        UrlStorage urlStorage = new UrlStorage();
-        urlStorage.create(url);
+        UrlRepository urlRepository = new UrlDatabaseStorage();
+        urlRepository.create(url);
 
         response.sendRedirect("/");
     }

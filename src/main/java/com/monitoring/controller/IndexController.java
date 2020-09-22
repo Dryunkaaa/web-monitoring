@@ -3,7 +3,8 @@ package com.monitoring.controller;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
 import com.monitoring.service.MonitoringService;
-import com.monitoring.storage.UrlStorage;
+import com.monitoring.storage.UrlDatabaseStorage;
+import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +21,10 @@ public class IndexController extends Controller {
     @Override
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
         MonitoringService monitoringService = new MonitoringService();
-        List<URL> urlList = new UrlStorage().getAll();
+        UrlRepository urlRepository = new UrlDatabaseStorage();
+
+        List<URL> urlList = new ArrayList<>();
+        urlRepository.getListData().forEach(o -> urlList.add((URL) o));
 
         monitoringService.startMonitoring(urlList);
 

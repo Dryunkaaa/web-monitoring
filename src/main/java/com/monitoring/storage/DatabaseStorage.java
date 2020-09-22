@@ -1,19 +1,18 @@
 package com.monitoring.storage;
 
 import java.sql.*;
-import java.util.List;
 
-public abstract class Storage {
+public class DatabaseStorage {
 
-    protected static final String DB_DRIVER = "org.postgresql.Driver";
-    protected static final String SERVER_PATH = "ec2-54-247-71-245.eu-west-1.compute.amazonaws.com:5432";
-    protected static final String DB_NAME = "deqfseqdab4btv";
-    protected static final String DB_LOGIN = "nctyahnhqwmzxs";
-    protected static final String DB_PASSWORD = "9dff8915dfc180dd6142ebc100b629d36e0b2237e799c61cda3dc6ce4b0cc9be";
+    private static final String DB_DRIVER = "org.postgresql.Driver";
+    private static final String SERVER_PATH = "ec2-54-247-71-245.eu-west-1.compute.amazonaws.com:5432";
+    private static final String DB_NAME = "deqfseqdab4btv";
+    private static final String DB_LOGIN = "nctyahnhqwmzxs";
+    private static final String DB_PASSWORD = "9dff8915dfc180dd6142ebc100b629d36e0b2237e799c61cda3dc6ce4b0cc9be";
     protected static Connection connection;
     protected Statement statement;
 
-    public Storage() {
+    public DatabaseStorage() {
         if (connection == null) {
             initConnection();
         } else {
@@ -26,12 +25,6 @@ public abstract class Storage {
 
         initDriver();
     }
-
-    public abstract void create(Object object);
-
-    public abstract void remove(long id);
-
-    public abstract void update(Object object);
 
     protected void closeResultSet(ResultSet rs) {
         try {
@@ -59,4 +52,5 @@ public abstract class Storage {
             e.printStackTrace();
         }
     }
+
 }

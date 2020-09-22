@@ -4,7 +4,8 @@ import com.monitoring.controller.Controller;
 import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.service.MonitoringService;
-import com.monitoring.storage.UrlStorage;
+import com.monitoring.storage.UrlDatabaseStorage;
+import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,8 +17,8 @@ public class EditUrlController extends Controller {
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
         long id = Long.parseLong(request.getParameter("urlId"));
 
-        UrlStorage urlStorage = new UrlStorage();
-        URL url = urlStorage.getById(id);
+        UrlRepository urlRepository = new UrlDatabaseStorage();
+        URL url = (URL) urlRepository.getDataById(id);
 
         request.setAttribute("url", url);
         request.getRequestDispatcher("/views/edit_url.jsp").forward(request, response);
@@ -35,12 +36,12 @@ public class EditUrlController extends Controller {
         long minResponseSize = Long.parseLong(request.getParameter("minResponseSize"));
         String responseSubstring = request.getParameter("responseSubstring");
 
-        UrlStorage urlStorage = new UrlStorage();
+        UrlRepository urlRepository = new UrlDatabaseStorage();
 
         List<URL> monitoringUrls = IndexController.monitoringUrls;
-        int monitoringUrlIndex = monitoringUrls.indexOf(urlStorage.getById(id));
+        int monitoringUrlIndex = monitoringUrls.indexOf(urlRepository.getDataById(id));
 
-        URL url = urlStorage.getById(id);
+        URL url = (URL) urlRepository.getDataById(id);
 
         if (monitoringUrlIndex != -1) { // method returned '-1' if element didn't found
             url = monitoringUrls.get(monitoringUrlIndex);
@@ -55,7 +56,7 @@ public class EditUrlController extends Controller {
         url.setMinResponseSize(minResponseSize);
         url.setResponseSubstring(responseSubstring);
 
-        urlStorage.update(url);
+        urlRepository.update(url);
 
         response.sendRedirect("/");
     }
