@@ -36,7 +36,7 @@
         out.println("<input type='number' name='maxResponseSize' value='" + url.getMaxResponseSize()+"'>");
         out.println("<br>");
         out.println("<p>Response substring (set empty field if not want to set)</p>");
-        out.println("<input type='number' name='responseSubstring' value='" + url.getResponseSubstring()+"'>");
+        out.println("<input type='text' name='responseSubstring' value='" + url.getResponseSubstring()+"'>");
     %>
 
     <br>

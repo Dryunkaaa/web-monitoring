@@ -1,29 +1,23 @@
 package com.monitoring.entity;
 
-import java.util.List;
-import java.util.Map;
-
 public class Response {
 
     private long responseTime;
     private long responseSize;
     private long responseCode;
-    private Map<String, List<String>> headerFields;
+    private String responseText;
 
     public Response() {
 
     }
 
-    public Response(long responseTime, long responseSize, long responseCode, Map<String, List<String>> headerFields) {
+    public Response(long responseTime, long responseSize, long responseCode, String responseText) {
         this.responseTime = responseTime;
         this.responseSize = responseSize;
         this.responseCode = responseCode;
-        this.headerFields = headerFields;
+        this.responseText = responseText;
     }
 
-    public boolean containsHeaderSubstring(String substring){
-        return headerFields.containsKey(substring);
-    }
 
     public long getResponseTime() {
         return responseTime;
@@ -49,11 +43,11 @@ public class Response {
         this.responseCode = responseCode;
     }
 
-    public Map<String, List<String>> getHeaderFields() {
-        return headerFields;
+    public String getResponseText() {
+        return responseText;
     }
 
-    public void setHeaderFields(Map<String, List<String>> headerFields) {
-        this.headerFields = headerFields;
+    public void setResponseText(String responseText) {
+        this.responseText = responseText;
     }
 }

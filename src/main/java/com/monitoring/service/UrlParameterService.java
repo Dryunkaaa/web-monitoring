@@ -4,11 +4,11 @@ import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
 import com.monitoring.entity.Response;
 import com.monitoring.entity.ResponseStatus;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.List;
-import java.util.Map;
 
 public class UrlParameterService {
 
@@ -35,8 +35,8 @@ public class UrlParameterService {
             errorText = "Response size is out of bounds";
         }else if(response.getResponseCode() != url.getExceptedResponseCode()){
             errorText = "Expected code not received";
-        }else if(!containsHeaderSubstring(response, url.getResponseSubstring())){
-            errorText = "Expected header substring not received";
+        }else if(!response.getResponseText().contains(url.getResponseSubstring())){
+            errorText = "Response not contains expected substring";
         }
 
         if (errorText.isEmpty()) {
@@ -46,27 +46,23 @@ public class UrlParameterService {
         return new Message(ResponseStatus.Critical, errorText);
     }
 
-    public boolean containsHeaderSubstring(Response response, String headerSubstring) {
-        if (headerSubstring.isEmpty()) {
-            return true;
-        }
-
-        return response.containsHeaderSubstring(headerSubstring);
-    }
-
     private Response getResponse(String urlPath) {
         try {
             long startTime = System.currentTimeMillis();
             HttpURLConnection connection = connectionService.openConnection(urlPath);
+            InputStream inputStream = connection.getInputStream();
 
             long time = System.currentTimeMillis() - startTime;
-            long responseSize = connection.getInputStream().available();
+            long responseSize = inputStream.available();
             long responseCode = connection.getResponseCode();
-            Map<String, List<String>> headerFields = connection.getHeaderFields();
+
+            String encoding = connection.getContentEncoding();
+            encoding = encoding == null ? "UTF-8" : encoding;
+            String body = IOUtils.toString(inputStream, encoding);
 
             connection.disconnect();
 
-            return new Response(time, responseSize, responseCode, headerFields);
+            return new Response(time, responseSize, responseCode, body);
         } catch (IOException e) {
             e.printStackTrace();
         }
