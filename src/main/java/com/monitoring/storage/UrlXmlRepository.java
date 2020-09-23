@@ -5,7 +5,7 @@ import com.monitoring.entity.ResponseStatus;
 
 import java.util.List;
 
-public class UrlXmlStorage extends XmlStorage implements UrlRepository{
+public class UrlXmlRepository extends XmlStorage implements UrlRepository{
 
     @Override
     public void updateResponseStatus(URL url, ResponseStatus responseStatus) {

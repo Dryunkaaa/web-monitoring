@@ -3,13 +3,18 @@ package com.monitoring.controller.url;
 import com.monitoring.controller.Controller;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.ResponseStatus;
-import com.monitoring.storage.UrlDatabaseStorage;
 import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UrlAddController extends Controller {
+
+    private UrlRepository urlRepository;
+
+    public UrlAddController(UrlRepository urlRepository) {
+        this.urlRepository = urlRepository;
+    }
 
     @Override
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -40,7 +45,6 @@ public class UrlAddController extends Controller {
         url.setResponseSubstring(responseSubstring);
         url.setResponseStatus(ResponseStatus.OK);
 
-        UrlRepository urlRepository = new UrlDatabaseStorage();
         urlRepository.create(url);
 
         response.sendRedirect("/");

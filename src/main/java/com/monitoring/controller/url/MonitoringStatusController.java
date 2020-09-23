@@ -3,33 +3,41 @@ package com.monitoring.controller.url;
 import com.monitoring.controller.Controller;
 import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
+import com.monitoring.entity.Message;
 import com.monitoring.service.MonitoringService;
-import com.monitoring.storage.UrlDatabaseStorage;
 import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MonitoringStatusController extends Controller {
 
+    private Map<Long, Message> messageMap;
+    private List<URL> monitoringUrls;
+    private UrlRepository urlRepository;
+
+    public MonitoringStatusController(Map<Long, Message> messageMap, List<URL> monitoringUrls, UrlRepository urlRepository) {
+        this.messageMap = messageMap;
+        this.monitoringUrls = monitoringUrls;
+        this.urlRepository = urlRepository;
+    }
+
     @Override
     public void handleGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        MonitoringService monitoringService = new MonitoringService(monitoringUrls, messageMap);
+
         long id = Long.parseLong(request.getParameter("id"));
-        UrlRepository urlRepository = new UrlDatabaseStorage();
 
         URL url = (URL) urlRepository.getDataById(id);
         urlRepository.updateMonitoringStatus(url);
-
-        MonitoringService monitoringService = new MonitoringService();
 
         List<URL> urls = new ArrayList<>();
         urlRepository.getListData().forEach(o -> urls.add((URL) o));
 
         monitoringService.startMonitoring(urls);
-
-        List<URL> monitoringUrls = IndexController.monitoringUrls;
 
         if (monitoringUrls.size() > 0) {
             int urlIndex = monitoringUrls.indexOf(url);

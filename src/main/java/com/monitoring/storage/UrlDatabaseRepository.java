@@ -9,12 +9,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UrlDatabaseStorage extends DatabaseStorage implements UrlRepository {
+public class UrlDatabaseRepository extends DatabaseStorage implements UrlRepository {
 
     private PreparedStatement createStatement;
     private PreparedStatement updateStatement;
 
-    public UrlDatabaseStorage() {
+    public UrlDatabaseRepository() {
         initStatements();
     }
 

@@ -20,7 +20,7 @@
 
     <%
         List<URL> urls = (List<URL>) request.getAttribute("urls");
-        Map<Long, Message> errorMap = (Map<Long, Message>) request.getAttribute("messageMap");
+        Map<Long, Message> messageMap = (Map<Long, Message>) request.getAttribute("messageMap");
 
         for (URL url : urls) {
             out.println("<tr>");
@@ -28,8 +28,8 @@
             out.println("<td>" + url.getPath() + "</td>");
             out.println("<td>" + url.getResponseStatus().toString() + "</td>");
 
-            if (errorMap.get(url.getId()) != null) {
-                out.println("<td>" + errorMap.get(url.getId()).getMessage() + "</td>");
+            if (messageMap.get(url.getId()) != null) {
+                out.println("<td>" + messageMap.get(url.getId()).getMessage() + "</td>");
             }else{
                 out.println("<td>Unknown</td>");
             }
