@@ -53,4 +53,7 @@ public class DatabaseStorage {
         }
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
 }

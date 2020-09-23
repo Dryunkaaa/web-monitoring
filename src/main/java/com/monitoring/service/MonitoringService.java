@@ -1,6 +1,5 @@
 package com.monitoring.service;
 
-import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
 import com.monitoring.storage.UrlDatabaseRepository;
@@ -8,7 +7,6 @@ import com.monitoring.storage.UrlRepository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MonitoringService {
 
