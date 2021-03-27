@@ -33,9 +33,9 @@ public class UrlParameterService {
 
         if (!boundService.numberIsInRange(response.getResponseSize(), url.getMinResponseSize(), url.getMaxResponseSize())) {
             errorText = "Response size is out of bounds";
-        }else if(response.getResponseCode() != url.getExceptedResponseCode()){
+        } else if (response.getResponseCode() != url.getExceptedResponseCode()) {
             errorText = "Expected code not received";
-        }else if(!response.getResponseText().contains(url.getResponseSubstring())){
+        } else if (!response.getResponseText().contains(url.getResponseSubstring())) {
             errorText = "Response not contains expected substring";
         }
 
@@ -69,5 +69,4 @@ public class UrlParameterService {
 
         return new Response();
     }
-
 }

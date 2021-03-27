@@ -1,7 +1,6 @@
 package com.monitoring.controller.url;
 
 import com.monitoring.controller.Controller;
-import com.monitoring.controller.IndexController;
 import com.monitoring.domain.URL;
 import com.monitoring.entity.Message;
 import com.monitoring.service.MonitoringService;

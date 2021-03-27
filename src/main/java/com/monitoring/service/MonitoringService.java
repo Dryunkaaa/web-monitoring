@@ -36,7 +36,7 @@ public class MonitoringService {
     }
 
     private Runnable getMonitoringTask(URL url) {
-        Runnable runnable = () -> {
+        return () -> {
             UrlRepository urlRepository = new UrlDatabaseRepository();
 
             while (url.enabledMonitoringStatus() && !Thread.currentThread().isInterrupted()) {
@@ -49,7 +49,7 @@ public class MonitoringService {
                 }
 
                 try {
-                    Thread.currentThread().sleep(url.getMonitoringPeriod());
+                    Thread.sleep(url.getMonitoringPeriod());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -57,8 +57,5 @@ public class MonitoringService {
 
             monitoringUrls.remove(url);
         };
-
-        return runnable;
     }
-
 }

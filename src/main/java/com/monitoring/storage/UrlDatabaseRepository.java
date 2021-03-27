@@ -26,10 +26,9 @@ public class UrlDatabaseRepository extends DatabaseStorage implements UrlReposit
         try {
             rs = statement.executeQuery(query);
 
-            while (rs.next()) {
+            if (rs.next()) {
                 return getUrlWithProperties(rs);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

@@ -8,7 +8,6 @@ public class Response {
     private String responseText;
 
     public Response() {
-
     }
 
     public Response(long responseTime, long responseSize, long responseCode, String responseText) {

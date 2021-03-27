@@ -2,22 +2,18 @@ package com.monitoring.controller.url;
 
 import com.monitoring.controller.Controller;
 import com.monitoring.domain.URL;
-import com.monitoring.entity.Message;
 import com.monitoring.storage.UrlRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 public class EditUrlController extends Controller {
 
-    private Map<Long, Message> messageMap;
     private List<URL> monitoringUrls;
     private UrlRepository urlRepository;
 
-    public EditUrlController(Map<Long, Message> messageMap, List<URL> monitoringUrls, UrlRepository urlRepository) {
-        this.messageMap = messageMap;
+    public EditUrlController(List<URL> monitoringUrls, UrlRepository urlRepository) {
         this.monitoringUrls = monitoringUrls;
         this.urlRepository = urlRepository;
     }
@@ -44,13 +40,13 @@ public class EditUrlController extends Controller {
         long minResponseSize = Long.parseLong(request.getParameter("minResponseSize"));
         String responseSubstring = request.getParameter("responseSubstring");
 
-
         int monitoringUrlIndex = monitoringUrls.indexOf(urlRepository.getDataById(id));
-
-        URL url = (URL) urlRepository.getDataById(id);
+        URL url;
 
         if (monitoringUrlIndex != -1) { // method returned '-1' if element didn't found
             url = monitoringUrls.get(monitoringUrlIndex);
+        } else {
+            url = (URL) urlRepository.getDataById(id);
         }
 
         url.setMonitoringPeriod(monitoringPeriod);

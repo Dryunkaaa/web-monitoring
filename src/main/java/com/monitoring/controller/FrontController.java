@@ -68,7 +68,7 @@ public class FrontController implements Filter {
         handlers.put("/", new IndexController(messageMap, monitoringUrls, urlRepository));
         handlers.put("/addUrl", new UrlAddController(urlRepository));
         handlers.put("/changeMonitoringStatus", new MonitoringStatusController(messageMap, monitoringUrls, urlRepository));
-        handlers.put("/edit", new EditUrlController(messageMap, monitoringUrls, urlRepository));
-        handlers.put("/delete", new RemoveUrlController(messageMap, monitoringUrls, urlRepository));
+        handlers.put("/edit", new EditUrlController(monitoringUrls, urlRepository));
+        handlers.put("/delete", new RemoveUrlController(monitoringUrls, urlRepository));
     }
 }

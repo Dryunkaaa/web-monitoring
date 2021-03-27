@@ -39,5 +39,4 @@ public class IndexController extends Controller {
 
         request.getServletContext().getRequestDispatcher("/views/index.jsp").forward(request, response);
     }
-
 }
